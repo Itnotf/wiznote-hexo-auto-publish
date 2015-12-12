@@ -1,0 +1,14 @@
+/.idea
+/node_modules
+/.deploy_git
+/public
+/scaffolds
+/source
+/tmp
+/themes/*
+!/themes/yilia/_config.yml
+package.json
+_config.yml
+db.json
+
+/themes/yilia/_config.yml
