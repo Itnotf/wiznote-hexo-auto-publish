@@ -6,6 +6,5 @@
 /tmp
 /themes/*
 db.json
-
 /vendor
 composer.lock
