@@ -5,7 +5,6 @@
 /source
 /tmp
 /themes/*
-!/themes/yilia/_config.yml
 db.json
 
 /vendor
