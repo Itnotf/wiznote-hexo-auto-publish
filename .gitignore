@@ -12,3 +12,6 @@ _config.yml
 db.json
 
 /themes/yilia/_config.yml
+
+/vendor
+composer.lock
