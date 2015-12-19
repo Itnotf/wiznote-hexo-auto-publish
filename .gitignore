@@ -5,10 +5,7 @@
 /scaffolds
 /source
 /tmp
-/themes/*
-!/themes/yilia/_config.yml
+!/themes/yilia/
 package.json
 _config.yml
 db.json
-
-/themes/yilia/_config.yml
