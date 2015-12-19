@@ -3,9 +3,6 @@
 /.deploy_git
 /public
 /scaffolds
-/source
 /tmp
 !/themes/yilia/
-package.json
-_config.yml
 db.json
