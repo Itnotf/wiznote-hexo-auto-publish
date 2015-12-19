@@ -54,3 +54,5 @@ aboutme: 你猜
 
 #增加百度统计
 baidu_analytics: true
+#增加百度推送
+baidu_push: true
