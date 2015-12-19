@@ -28,7 +28,7 @@ $content = $member_arr['description'];
 
 $text = preg_replace('/<div>(.*?)<\/div>/', "$1" . PHP_EOL, $content);//<div>变换行
 $text = html_entity_decode($text);
-$text = preg_replace("/<.*?>/", "", $text);//去掉一些类似<a/>的标签
+$text = preg_replace("/<a\/>/", "", $text);//去掉一些类似<a/>的标签
 $text = preg_replace('/来自为知笔记\(Wiz\)/', "", $text);
 
 //hexo 的正文是yaml格式
