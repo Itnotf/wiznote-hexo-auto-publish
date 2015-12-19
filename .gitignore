@@ -6,3 +6,8 @@
 /source
 !/themes/yilia/
 db.json
+composer.lock
+/themes/jacman/
+/themes/pacman/
+/themes/landscape/
+/vendor
