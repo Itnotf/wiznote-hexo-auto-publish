@@ -51,3 +51,6 @@ friends:
 #aboutme: false
 #开启——
 aboutme: 你猜
+
+#增加百度统计
+baidu_analytics: true
