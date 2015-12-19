@@ -2,9 +2,7 @@
 /node_modules
 /.deploy_git
 /public
-/source
+/scaffolds
 /tmp
-/themes/*
+!/themes/yilia/
 db.json
-/vendor
-composer.lock
