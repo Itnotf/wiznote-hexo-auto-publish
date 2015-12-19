@@ -2,7 +2,7 @@
 /node_modules
 /.deploy_git
 /public
-/scaffolds
 /tmp
+/source
 !/themes/yilia/
 db.json
