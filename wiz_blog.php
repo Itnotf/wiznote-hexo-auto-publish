@@ -1,120 +1,113 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
+/*
+ * 将wiz note发布过来的内容生成md文件保存到sourse文件夹中
+*/
+error_reporting(0);
+
+header('Content-Type: text/xml; charset=utf-8');
 
 use Symfony\Component\Yaml\Yaml;
 
+require __DIR__ . '/vendor/autoload.php';
+
+//如果不存在/path_to_tmp/hexo/,新建一个，777权限
 $path_to_tmp = sys_get_temp_dir() . '/hexo/';
+if (!is_dir($path_to_tmp))
+    mkdir($path_to_tmp, '0777') || die(errorResponse(0, '创建文件夹失败'));;
 
+//获取输入流，如果为空，返回
 $input = file_get_contents('php://input', 'r');
+if (empty($input))
+    die(errorResponse(0, '内容为空'));
 
-$xml = new DOMDocument();
+try {
+    $xml = new DOMDocument();
+    $xml->loadXML($input);
 
-//$input ? $xml->loadXML($input) && $xml->save('test.xml') : $xml->load('test.xml');;
-empty($input) ? die('empty input!') : $xml->loadXML($input);
+    //将传过来的内容保存在$member数组里面
+    $methodCall = $xml->getElementsByTagName('methodName')->item(0)->nodeValue;//metaWeblog.newPost ,metaWeblog.newPost
+    $param      = $xml->getElementsByTagName('param')->item(3)->ownerDocument;
+    $member     = $param->getElementsByTagName('member');
 
-$params = $xml->getElementsByTagName('param');
+    $members = array();
+    foreach ($member as $v) {
+        $members[$v->childNodes->item(0)->nodeValue] = $v->childNodes->item(1)->nodeValue;
+    }
 
-$struct = $params->item(3);
+    //将笔记内容过滤并生成hexo格式的md文件
 
-$member = $struct->getElementsByTagName('member');
+    $content = $members['description'];
+    //将div包裹的行级元素全部去掉div加上换行
+    $content = preg_replace('/<div>(.*?)<\/div>/', "$1" . PHP_EOL, $content);
+    //将内容中的html元素全部清除
+    $content = strip_tags($content);
+    //将html实体符号变回元素，wiz之前会将Html元素转化成实体元素
+    $content = html_entity_decode($content);
+    //将来自未知笔记去除，用了别人的产品还是帮忙宣传一下吧
+    //$content = preg_replace('/来自为知笔记\(Wiz\)/', "", $content);
 
-$member_arr = array();
-foreach ($member as $v) {
-    $member_name              = $v->getElementsByTagName('name')->item(0)->nodeValue;
-    $member_arr[$member_name] = $v->getElementsByTagName('value')->item(0)->nodeValue;
+    //如果大于200字符，加<!--more-->标签
+    if (mb_strlen($content) > 200) {
+        $content = mb_substr($content, 0, 200, 'utf8') . "<!--more-->" . mb_substr($content, 200, NULL, 'utf8');
+    }
+
+    //hexo 的正文是yaml格式
+    $yaml['title']    = $members['title'];
+    $yaml['date']     = date('Y-m-d H:i:s', strtotime($members['dateCreated']));
+    $yaml['updated']  = date('Y-m-d H:i:s', time());
+    $yaml['category'] = '日志';
+    $yaml['tags']     = explode(', ', $members['mt_keywords']);
+
+    //拼接yaml和正文
+    $post = Yaml::dump($yaml) . '---' . PHP_EOL . $content;
+
+    //生成新的md文件
+    $ret = file_put_contents($path_to_tmp . $yaml['title'] . '.md', $post);
+
+    //在tmp文件夹下保存一下日志的备份
+    $xml->save($path_to_tmp . $yaml['title'] . '.xml');
+    unset($xml);
+} catch (Exception $e) {
+    echo errorResponse($e->getCode(), $e->getMessage());
 }
 
-$content = $member_arr['description'];
+echo successResponse();
 
-$text = preg_replace('/<div>(.*?)<\/div>/', "$1" . PHP_EOL, $content);//<div>变换行
-$text = html_entity_decode($text);
-$text = preg_replace("/<[^\!].*?>/", "", $text);//去掉一些类似<a/>的标签
-$text = preg_replace('/来自为知笔记\(Wiz\)/', "", $text);
+function successResponse($successString = '')
+{
+    $error_response = <<<EOF
+<?xml version="1.0"?>
+<methodResponse>
+   <params>
+      <param>
+         <value><string>%s</string></value>
+         </param>
+      </params>
+   </methodResponse>
+EOF;
+    return sprintf($error_response, $successString);
+}
 
-//hexo 的正文是yaml格式
-$yaml['title']    = $member_arr['title'];
-$yaml['date']     = date('Y-m-d H:i:s', strtotime($member_arr['dateCreated']));
-$yaml['category'] = '日志';
-$yaml['tags']     = explode(', ', $member_arr['mt_keywords']);
-//$hexo['description'] = $member_arr[''];
-
-$post = implode('---' . PHP_EOL, array(Yaml::dump($yaml), $text));
-
-$ret = file_put_contents($path_to_tmp . $yaml['title'] . '.md', $post);
-
-//在tmp文件夹下保存一下日志的备份
-$xml->save($path_to_tmp . $yaml['title'] . '.xml');
-unset($xml);
-
-
-exit;
-
-$xml = new XMLWriter();
-$xml->openUri('php://output'); // or 'php://output' 
-$xml->setIndentString("  ");
-$xml->setIndent(TRUE);
-// start 
-$xml->startDocument('1.0', 'ISO-8859-1');
-// <methodResponse> 
-$xml->startElement('methodResponse');
-// <params> 
-$xml->startElement('params');
-// <param>
-$xml->startElement('param');
-// <value> 
-$xml->startElement('value');
-// <array>
-$xml->startElement('array');
-// <data>
-$xml->startElement('data');
-// <value>
-$xml->startElement('value');
-// <struct>
-$xml->startElement('struct');
-
-//<member>
-$xml->startElement('member');
-//name
-$xml->startElement('name');
-$xml->text('url');
-$xml->endElement();
-//value
-$xml->startElement('value');
-$xml->text('http://blog.xingxuchu.com');
-$xml->endElement();
-$xml->endElement();
-
-//<member>
-$xml->startElement('member');
-//name
-$xml->startElement('name');
-$xml->text('blogid');
-$xml->endElement();
-//value
-$xml->startElement('value');
-$xml->text('1');
-$xml->endElement();
-$xml->endElement();
-
-//<member>
-$xml->startElement('member');
-//name
-$xml->startElement('name');
-$xml->text('blogName');
-$xml->endElement();
-//value
-$xml->startElement('value');
-$xml->text('test');
-$xml->endElement();
-$xml->endElement();
-
-$xml->endElement(); //struct 
-$xml->endElement(); //value
-$xml->endElement(); //data
-$xml->endElement(); //array
-$xml->endElement(); //value
-$xml->endElement(); //param
-$xml->endElement(); //params
-$xml->endElement(); //methodResponse
-$xml->endDocument();
-$xml->flush();
+function errorResponse($faultCode, $faultString)
+{
+    $error_response = <<<EOF
+<?xml version="1.0"?>
+<methodResponse>
+    <fault>
+        <value>
+         <struct>
+            <member>
+               <name>faultCode</name>
+               <value><int>%d</int></value>
+               </member>
+            <member>
+               <name>faultString</name>
+               <value><string>%s</string></value>
+               </member>
+            </struct>
+         </value>
+    </fault>
+</methodResponse>
+EOF;
+    return sprintf($error_response, $faultString, $faultCode);
+}
