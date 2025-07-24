@@ -72,5 +72,5 @@ theme: yilia
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:Itnotf/itnotf.github.io.git
+  repo: https://<ACCESS_TOKEN>@github.com/itnotf/itnotf.github.io.git
   branch: master
