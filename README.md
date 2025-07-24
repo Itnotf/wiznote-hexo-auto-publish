@@ -1,3 +1,4 @@
+
 # WizNote to Hexo Auto Publish
 
 ## 项目简介
@@ -19,3 +20,30 @@
 
    ```bash
    composer install
+````
+
+2. 配置脚本中的路径和权限，确保临时目录存在且可写。
+
+3. 将为知笔记的发布请求指向该脚本。
+
+4. Hexo 执行博客生成命令即可看到最新内容。
+
+
+## 依赖
+
+* PHP 7+
+* Composer
+* symfony/yaml 组件
+
+## 适用场景
+
+* 需要将为知笔记中的内容无缝同步到 Hexo 博客的用户
+* 希望自动化博客发布流程，减少手动转换的开发者
+
+## 许可证
+
+MIT License
+
+---
+
+欢迎 Star 和 Fork，贡献建议和改进均欢迎提交 Issue 或 Pull Request！
