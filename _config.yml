@@ -1,23 +1,27 @@
-# Hexo Configuration
-## Docs: http://hexo.io/docs/configuration.html
-## Source: https://github.com/hexojs/hexo/
-
-# Site
+# --------------------------------------
+# ✅ 基本信息配置
+# --------------------------------------
 title: 这里没有鱼
 subtitle: niweishenmeyaokandezhemezixi
-description:
+description: ""
 author: 60
-language:
-timezone:
+language: zh-CN
+timezone: Asia/Shanghai
 
-# URL
-## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+# --------------------------------------
+# ✅ URL 配置（GitHub Pages 子目录注意）
+# 如果你部署在 https://itnotf.github.io/hexo-deploy
+# 就必须 root 设置为 /hexo-deploy/
+# 否则为 /
+# --------------------------------------
 url: https://itnotf.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
 
-# Directory
+# --------------------------------------
+# ✅ 目录结构（基本保持默认）
+# --------------------------------------
 source_dir: source
 public_dir: public
 tag_dir: tags
@@ -27,50 +31,92 @@ code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
 
-# Writing
-new_post_name: :title.md # File name of new posts
+# --------------------------------------
+# ✅ 写作相关配置
+# --------------------------------------
+new_post_name: :title.md
 default_layout: post
-titlecase: false # Transform title into titlecase
-external_link: true # Open external links in new tab
+titlecase: false
+external_link: true
 filename_case: 0
 render_drafts: false
 post_asset_folder: false
 relative_link: false
 future: true
+
 highlight:
   enable: true
   line_number: true
-  auto_detect: true
-  tab_replace:
+  auto_detect: false
+  tab_replace: ""
 
-# Category & Tag
+# --------------------------------------
+# ✅ 分类与标签（默认即可）
+# --------------------------------------
 default_category: uncategorized
 category_map:
 tag_map:
 
-# Date / Time format
-## Hexo uses Moment.js to parse and display date
-## You can customize the date format as defined in
-## http://momentjs.com/docs/#/displaying/format/
+# --------------------------------------
+# ✅ 时间显示格式
+# --------------------------------------
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 
-# Pagination
-## Set per_page to 0 to disable pagination
+# --------------------------------------
+# ✅ 分页配置
+# --------------------------------------
 per_page: 10
 pagination_dir: page
 
-# Extensions
-## Plugins: http://hexo.io/plugins/
+# --------------------------------------
+# ✅ 插件配置（推荐保留 sitemap、feed）
+# --------------------------------------
 plugins:
-- hexo-generator-feed
-- hexo-generator-sitemap
-## Themes: http://hexo.io/themes/
+  - hexo-generator-feed
+  - hexo-generator-sitemap
+  - hexo-seo-friendly
+  - hexo-renderer-markdown-it
+  - hexo-wordcount
+
+# --------------------------------------
+# ✅ 主题配置
+# 替换为你用的主题名，如 yilia、next、butterfly
+# --------------------------------------
 theme: yilia
 
-# Deployment
-## Docs: http://hexo.io/docs/deployment.html
-deploy:
-  type: git
-  repo: https://<ACCESS_TOKEN>@github.com/itnotf/itnotf.github.io.git
-  branch: master
+# Markdown 渲染配置
+markdown:
+  render:
+    html: true             # 允许 HTML 标签
+    xhtmlOut: false
+    breaks: true           # 换行即换行
+    linkify: true          # 自动识别链接
+    typographer: true      # 智能标点转换
+  plugins:
+    - markdown-it-emoji      # 支持 Emoji
+    - markdown-it-abbr       # 缩写
+    - markdown-it-container  # 自定义容器
+    - markdown-it-deflist    # 定义列表
+    - markdown-it-footnote   # 脚注
+    - markdown-it-ins        # 插入线
+    - markdown-it-mark       # 标记文本
+    - markdown-it-sub        # 下标
+    - markdown-it-sup        # 上标
+
+# Wordcount 插件配置
+wordcount:
+  enable: true
+  count_type:
+    - html
+    - text
+    - code
+  exclude:
+    - comments
+    - script
+    - style
+
+
+# SEO Friendly 配置（可根据需要调整）
+seo:
+  enable: true
