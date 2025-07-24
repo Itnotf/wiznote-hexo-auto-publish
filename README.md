@@ -1,49 +1,85 @@
+# wiz2hexo
 
-# WizNote to Hexo Auto Publish
+将为知笔记自动发布到 Hexo 博客的工具，支持：
 
-## 项目简介
-
-本项目提供一个基于 PHP 的脚本，将为知笔记（Wiz Note）发布的内容自动转换为 Hexo 博客支持的 Markdown 格式文件，保存到 Hexo `source` 文件夹下，实现博客内容的自动更新和发布。
-
-## 功能特点
-
-- 自动解析为知笔记发布的 XML 内容
-- 清理 HTML 标签，转换成纯文本 Markdown 格式
-- 自动生成 Hexo 兼容的 YAML 头部（标题、日期、分类、标签）
-- 支持文章摘要分割（`<!--more-->`）
-- 自动保存对应的 XML 备份文件
-- 便于结合 Hexo 生成静态博客，保持笔记和博客同步
-
-## 使用说明
-
-1. 配置脚本运行环境，确保安装 PHP 和 Composer 依赖（Symfony YAML 组件）：
-
-   ```bash
-   composer install
-   ```
-
-2. 配置脚本中的路径和权限，确保临时目录存在且可写。
-
-3. 将为知笔记的发布请求指向该脚本。
-
-4. Hexo 执行博客生成命令即可看到最新内容。
-
-
-## 依赖
-
-* PHP 7+
-* Composer
-* symfony/yaml 组件
-
-## 适用场景
-
-* 需要将为知笔记中的内容无缝同步到 Hexo 博客的用户
-* 希望自动化博客发布流程，减少手动转换的开发者
-
-## 许可证
-
-MIT License
+- 接收 WizNote 推送内容（支持 XML-RPC 协议）
+- 将内容转换为 Markdown 格式并写入 `source/_posts`
+- 自动生成 Hexo 文章头部信息（YAML Front Matter）
+- 自动触发 Hexo 生成与部署（`hexo g -d`）
 
 ---
 
-欢迎 Star 和 Fork，贡献建议和改进均欢迎提交 Issue 或 Pull Request！
+## ✨ 功能特性
+
+- 📝 解析为知笔记 XML 内容，提取标题、日期、标签、正文
+- 🧼 清洗 HTML 标签，转换实体字符
+- 📌 内容超过 200 字时自动插入 `<!--more-->` 生成摘要
+- 🛠️ 输出为 Hexo 标准 `.md` 文件并保存在 `/tmp/hexo`
+- 🖥️ 配合 Shell 脚本自动发布到 GitHub Pages
+
+---
+
+## 📦 安装依赖
+
+确保系统安装了 PHP 和 Composer：
+
+```bash
+composer install
+```
+
+依赖组件：
+
+* symfony/yaml （用于生成 Hexo 的 YAML Front Matter）
+
+---
+
+## 🚀 使用方式
+
+1. 设置为知笔记中的远程发布地址指向此服务
+2. 配置 Web 服务器接收 XML-RPC 请求（如 Nginx + PHP-FPM）
+3. 每次发布会在 `/tmp/hexo/` 生成 `.md` 与 `.xml` 文件
+4. 使用如下脚本完成自动发布：
+
+```bash
+# auto_publish.sh
+cp -f /tmp/hexo/*.md /home/web/hexo/source/_posts/
+rm -f /tmp/hexo/*.md
+cd /home/web/hexo && hexo d -g
+```
+
+---
+
+## 📂 Hexo 配置建议（部分）
+
+\_config.yml 中的关键设置：
+
+```yaml
+source_dir: source
+default_layout: post
+theme: yilia
+deploy:
+  type: git
+  repo: git@github.com:Itnotf/itnotf.github.io.git
+  branch: master
+```
+
+---
+
+## 🧪 示例
+
+示例 POST XML → 自动生成 Markdown：
+
+```md
+---
+title: 示例笔记
+date: 2025-07-24 10:00:00
+updated: 2025-07-24 10:00:00
+category: 日志
+tags:
+  - 示例
+  - 笔记
+---
+这是笔记内容开头……
+<!--more-->
+这是笔记内容的剩余部分。
+```
