@@ -83,7 +83,7 @@ plugins:
 # ✅ 主题配置
 # 替换为你用的主题名，如 yilia、next、butterfly
 # --------------------------------------
-theme: yilia
+theme: butterfly
 
 # Markdown 渲染配置
 markdown:
@@ -120,3 +120,10 @@ wordcount:
 # SEO Friendly 配置（可根据需要调整）
 seo:
   enable: true
+
+
+search:
+  path: search.json
+  field: post
+  content: true
+  format: striptags
